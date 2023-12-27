@@ -9,6 +9,8 @@
 #define BOARD_WIDTH		1000
 #define BOARD_HEIGHT	600
 
+#define DEBUG 1
+
 void game_init(Game* game)
 {
 	if (game == NULL)return;
@@ -21,7 +23,7 @@ void game_init(Game* game)
 	int window_height = 800;
 
 	long paddle_width = 20;
-	long paddle_height = 250;
+	long paddle_height = 150;
 
 	long board_height = BOARD_HEIGHT;
 	long board_width = BOARD_WIDTH;
@@ -32,6 +34,8 @@ void game_init(Game* game)
 		return -1;
 	}
 	game->window = wnd;
+	game->userPoints = 0;
+	game->computerPoints = 0;
 	game->gameObjectsCount = 5;
 	game->gameObjects = malloc(game->gameObjectsCount * sizeof(gameObjectRect));
 
@@ -48,7 +52,7 @@ void game_init(Game* game)
 
 	//Set ball speed
 	gameObjectCircle* ball = (gameObjectCircle*)game->gameObjects[2];
-	ball->speedX = 5;
+	ball->speedX = 10;
 	ball->speedY = -5;
 }
 
@@ -66,7 +70,9 @@ void game_udpate(Game* game)
 
 	if (checkBallCollision(ball, paddle1) || checkBallCollision(ball, paddle2))ball->speedX *= -1;
 	if (checkBallCollision(ball, wallTop) || checkBallCollision(ball, wallBottom))ball->speedY *= -1;
+	computerMove(game);
 	keyboardEvents(game);
+	checkPoint(game);
 	
 }
 
@@ -87,11 +93,13 @@ void game_draw(Game* game)
 		{
 			gameObjectRect* obj = (gameObjectRect*)game->gameObjects[i];
 			drawRect(obj->x, obj->y, obj->w, obj->h, obj->color, obj->depth, game->window);
+			break;
 		}
 		case GO_CIRCLE:
 		{
 			gameObjectCircle* obj = (gameObjectCircle*)game->gameObjects[i];
 			drawCircle(obj->x, obj->y, obj->r, 360, obj->color, obj->depth, game->window);
+			break;
 		}
 		default: 
 			break;
@@ -122,10 +130,52 @@ int checkBallCollision(gameObjectCircle* obj1, gameObjectRect* obj2)
 	return 0;
 }
 
+void checkPoint(Game* game)
+{
+	gameObjectCircle* ball = (gameObjectCircle*)game->gameObjects[BALL];
+	gameObjectRect* paddleLeft = (gameObjectRect*)game->gameObjects[PADDLE_LEFT];
+	gameObjectRect* paddleRight = (gameObjectRect*)game->gameObjects[PADDLE_RIGHT];
+
+	if (ball->x - ball->r < paddleLeft->x)
+	{
+		ball->x = game->window->width / 2;
+		ball->y = game->window->height / 2;
+		game->computerPoints++;
+		if (DEBUG)printf("USER %d : %d COMPUTER\n", game->userPoints, game->computerPoints);
+	}
+	else if (ball->x + ball->r > paddleRight->x + paddleRight->w)
+	{
+		ball->x = game->window->width / 2;
+		ball->y = game->window->height / 2;
+		game->userPoints++;
+		if (DEBUG)printf("USER %d : %d COMPUTER\n", game->userPoints, game->computerPoints);
+
+	}
+}
+
 
 int keyboardEvents(Game* game)
 {
 	gameObjectRect* paddleLeft = (gameObjectRect*)game->gameObjects[PADDLE_LEFT];
 	if (game->window->keysPressed[VK_UP] && paddleLeft->y > 0)paddleLeft->y -= 5;
 	if (game->window->keysPressed[VK_DOWN] && paddleLeft->y + paddleLeft->h < BOARD_HEIGHT)paddleLeft->y += 5;
+}
+
+void computerMove(Game* game)
+{
+	gameObjectCircle* ball = (gameObjectCircle*)game->gameObjects[BALL];
+	gameObjectRect* paddleRight = (gameObjectRect*)game->gameObjects[PADDLE_RIGHT];
+
+	if (ball->speedX > 0 && ball->x > BOARD_WIDTH / 2)
+	{
+		if (ball->y > paddleRight->y + paddleRight->h && paddleRight->y + paddleRight->h < BOARD_HEIGHT)paddleRight->y+=2;
+		else if(paddleRight->y > 0) paddleRight->y-=2;
+	}
+
+	if (ball->speedX > 0 && ball->x > BOARD_WIDTH * (4.0/5.0))
+	{
+		if (ball->y > paddleRight->y + paddleRight->h && paddleRight->y + paddleRight->h < BOARD_HEIGHT)paddleRight->y += 5;
+		else if (paddleRight->y > 0) paddleRight->y -= 5;
+	}
+
 }

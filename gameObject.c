@@ -6,7 +6,7 @@ gameObjectCircle* createGameObject_circle(long x, long y, long r, long depth, Co
 
 	if (obj == NULL)return NULL;
 
-	obj->type = GO_RECT;
+	obj->type = GO_CIRCLE;
 	obj->id = OBJECT_ID;
 	obj->x = x;
 	obj->y = y;

@@ -9,14 +9,14 @@
 #include "gameObject.h"
 
 struct Game {
-	
-	unsigned long lastFrame;
-	int maxFps;
-	window* window;
 	int gameObjectsCount;
 	void** gameObjects;
 	char* title;
-
+	unsigned long lastFrame;
+	int maxFps;
+	window* window;
+	int userPoints;
+	int computerPoints;
 };  typedef struct Game Game;
 
 
@@ -25,3 +25,9 @@ void game_init(Game *game);
 void game_udpate(Game* game);
 void game_draw(Game* game);
 void game_destruct(Game* game);
+
+//User functions
+void computerMove(Game* game);
+int keyboardEvents(Game* game);
+int checkBallCollision(gameObjectCircle* obj1, gameObjectRect* obj2);
+void checkPoint(Game* game);

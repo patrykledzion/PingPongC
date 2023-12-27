@@ -10,7 +10,6 @@
 static int OBJECT_ID = 0;
 
 struct gameObjectRect {
-	Color4_t color;
 	int type;
 	int id;
 	long x;
@@ -18,6 +17,7 @@ struct gameObjectRect {
 	long w;
 	long h;
 	long depth;
+	Color4_t color;
 }; typedef struct gameObjectRect gameObjectRect;
 
 struct gameObjectTriangle {
@@ -30,7 +30,7 @@ struct gameObjectTriangle {
 }; typedef struct gameObjectTriangle gameObjectTriangle;
 
 struct gameObjectCircle {
-	Color4_t color;
+	
 	int type;
 	int id;
 	long x;
@@ -39,7 +39,7 @@ struct gameObjectCircle {
 	long depth;
 	int speedX;
 	int speedY;
-	
+	Color4_t color;
 	
 }; typedef struct gameObjectCircle gameObjectCircle;
 
