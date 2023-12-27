@@ -65,8 +65,8 @@ void game_udpate(Game* game)
 	gameObjectRect* paddle2 = (gameObjectRect*)game->gameObjects[PADDLE_RIGHT];
 	gameObjectRect* wallTop = (gameObjectRect*)game->gameObjects[WALL_TOP];
 	gameObjectRect* wallBottom = (gameObjectRect*)game->gameObjects[WALL_BOTTOM];
-	ball->x += ball->speedX;
-	ball->y += ball->speedY;
+	ball->super->x += ball->speedX;
+	ball->super->y += ball->speedY;
 
 	if (checkBallCollision(ball, paddle1) || checkBallCollision(ball, paddle2))ball->speedX *= -1;
 	if (checkBallCollision(ball, wallTop) || checkBallCollision(ball, wallBottom))ball->speedY *= -1;
@@ -87,18 +87,18 @@ void game_draw(Game* game)
 		gameObjectRect* obj_tmp = (gameObjectRect*)game->gameObjects[i];
 		
 		//printf("OBJECT TYPE: %d\n", obj_tmp->type);
-		switch (obj_tmp->type)
+		switch (obj_tmp->super->type)
 		{
 		case GO_RECT:
 		{
 			gameObjectRect* obj = (gameObjectRect*)game->gameObjects[i];
-			drawRect(obj->x, obj->y, obj->w, obj->h, obj->color, obj->depth, game->window);
+			drawRect(obj->super->x, obj->super->y, obj->w, obj->h, obj->super->color, obj->depth, game->window);
 			break;
 		}
 		case GO_CIRCLE:
 		{
 			gameObjectCircle* obj = (gameObjectCircle*)game->gameObjects[i];
-			drawCircle(obj->x, obj->y, obj->r, 360, obj->color, obj->depth, game->window);
+			drawCircle(obj->super->x, obj->super->y, obj->r, 360, obj->super->color, obj->depth, game->window);
 			break;
 		}
 		default: 
@@ -121,10 +121,10 @@ void game_destruct(Game* game)
 int checkBallCollision(gameObjectCircle* obj1, gameObjectRect* obj2)
 {
 	if (
-		obj1->x + obj1->r	> obj2->x &&
-		obj1->x	- obj1->r	< obj2->x + obj2->w &&
-		obj1->y + obj1->r	> obj2->y &&
-		obj1->y - obj1->r	< obj2->y + obj2->h
+		obj1->super->x + obj1->r	>	obj2->super->x				&&
+		obj1->super->x - obj1->r	<	obj2->super->x + obj2->w	&&
+		obj1->super->y + obj1->r	>	obj2->super->y				&&
+		obj1->super->y - obj1->r	<	obj2->super->y + obj2->h	
 		)
 		return 1;
 	return 0;
@@ -136,17 +136,17 @@ void checkPoint(Game* game)
 	gameObjectRect* paddleLeft = (gameObjectRect*)game->gameObjects[PADDLE_LEFT];
 	gameObjectRect* paddleRight = (gameObjectRect*)game->gameObjects[PADDLE_RIGHT];
 
-	if (ball->x - ball->r < paddleLeft->x)
+	if (ball->super->x - ball->r < paddleLeft->super->x)
 	{
-		ball->x = game->window->width / 2;
-		ball->y = game->window->height / 2;
+		ball->super->x = game->window->width / 2;
+		ball->super->y = game->window->height / 2;
 		game->computerPoints++;
 		if (DEBUG)printf("USER %d : %d COMPUTER\n", game->userPoints, game->computerPoints);
 	}
-	else if (ball->x + ball->r > paddleRight->x + paddleRight->w)
+	else if (ball->super->x + ball->r > paddleRight->super->x + paddleRight->w)
 	{
-		ball->x = game->window->width / 2;
-		ball->y = game->window->height / 2;
+		ball->super->x = game->window->width / 2;
+		ball->super->y = game->window->height / 2;
 		game->userPoints++;
 		if (DEBUG)printf("USER %d : %d COMPUTER\n", game->userPoints, game->computerPoints);
 
@@ -157,8 +157,8 @@ void checkPoint(Game* game)
 int keyboardEvents(Game* game)
 {
 	gameObjectRect* paddleLeft = (gameObjectRect*)game->gameObjects[PADDLE_LEFT];
-	if (game->window->keysPressed[VK_UP] && paddleLeft->y > 0)paddleLeft->y -= 5;
-	if (game->window->keysPressed[VK_DOWN] && paddleLeft->y + paddleLeft->h < BOARD_HEIGHT)paddleLeft->y += 5;
+	if (game->window->keysPressed[VK_UP] && paddleLeft->super->y > 0)paddleLeft->super->y -= 5;
+	if (game->window->keysPressed[VK_DOWN] && paddleLeft->super->y + paddleLeft->h < BOARD_HEIGHT)paddleLeft->super->y += 5;
 }
 
 void computerMove(Game* game)
@@ -166,16 +166,16 @@ void computerMove(Game* game)
 	gameObjectCircle* ball = (gameObjectCircle*)game->gameObjects[BALL];
 	gameObjectRect* paddleRight = (gameObjectRect*)game->gameObjects[PADDLE_RIGHT];
 
-	if (ball->speedX > 0 && ball->x > BOARD_WIDTH / 2)
+	if (ball->speedX > 0 && ball->super->x > BOARD_WIDTH / 2)
 	{
-		if (ball->y > paddleRight->y + paddleRight->h && paddleRight->y + paddleRight->h < BOARD_HEIGHT)paddleRight->y+=2;
-		else if(paddleRight->y > 0) paddleRight->y-=2;
+		if (ball->super->y > paddleRight->super->y + paddleRight->h && paddleRight->super->y + paddleRight->h < BOARD_HEIGHT)paddleRight->super->y+=2;
+		else if(paddleRight->super->y > 0) paddleRight->super->y-=2;
 	}
 
-	if (ball->speedX > 0 && ball->x > BOARD_WIDTH * (4.0/5.0))
+	if (ball->speedX > 0 && ball->super->x > BOARD_WIDTH * (4.0/5.0))
 	{
-		if (ball->y > paddleRight->y + paddleRight->h && paddleRight->y + paddleRight->h < BOARD_HEIGHT)paddleRight->y += 5;
-		else if (paddleRight->y > 0) paddleRight->y -= 5;
+		if (ball->super->y > paddleRight->super->y + paddleRight->h && paddleRight->super->y + paddleRight->h < BOARD_HEIGHT)paddleRight->super->y += 5;
+		else if (paddleRight->super->y > 0) paddleRight->super->y -= 5;
 	}
 
 }

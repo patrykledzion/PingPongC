@@ -9,38 +9,34 @@
 
 static int OBJECT_ID = 0;
 
-struct gameObjectRect {
+struct gameObject {
 	int type;
 	int id;
-	long x;
-	long y;
+	int x;
+	int y;
+	Color4_t color;
+}; typedef struct gameObject gameObject;
+
+struct gameObjectRect {
+	gameObject* super;
 	long w;
 	long h;
 	long depth;
-	Color4_t color;
 }; typedef struct gameObjectRect gameObjectRect;
 
 struct gameObjectTriangle {
-	int type;
-	int id;
+	gameObject* super;
 	Vector3_t c1;
 	Vector3_t c2;
 	Vector3_t c3;
-	Color4_t color;
 }; typedef struct gameObjectTriangle gameObjectTriangle;
 
 struct gameObjectCircle {
-	
-	int type;
-	int id;
-	long x;
-	long y;
+	gameObject* super;
 	long r;
 	long depth;
 	int speedX;
 	int speedY;
-	Color4_t color;
-	
 }; typedef struct gameObjectCircle gameObjectCircle;
 
 gameObjectCircle* createGameObject_circle(long x, long y, long r, long depth, Color4_t color);

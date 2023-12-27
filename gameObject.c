@@ -3,16 +3,23 @@
 gameObjectCircle* createGameObject_circle(long x, long y, long r, long depth, Color4_t color)
 {
 	gameObjectCircle* obj = malloc(sizeof(gameObjectCircle));
-
 	if (obj == NULL)return NULL;
 
-	obj->type = GO_CIRCLE;
-	obj->id = OBJECT_ID;
-	obj->x = x;
-	obj->y = y;
+	obj->super = malloc(sizeof(gameObject));
+	if (obj == NULL)
+	{
+		free(obj);
+		return NULL;
+	}
+
+	obj->super->type = GO_CIRCLE;
+	obj->super->id = OBJECT_ID;
+	obj->super->x = x;
+	obj->super->y = y;
+	obj->super->color = color;
+
 	obj->r = r;
 	obj->depth = depth;
-	obj->color = color;
 	obj->speedX = 0;
 	obj->speedY = 0;
 
@@ -24,17 +31,24 @@ gameObjectCircle* createGameObject_circle(long x, long y, long r, long depth, Co
 gameObjectRect* createGameObject_rect(long x, long y, long w, long h, long depth, Color4_t color)
 {
 	gameObjectRect* obj = malloc(sizeof(gameObjectRect));
-
 	if (obj == NULL)return NULL;
 
-	obj->type = GO_RECT;
-	obj->id = OBJECT_ID;
-	obj->x = x;
-	obj->y = y;
+	obj->super = malloc(sizeof(gameObject));
+	if (obj == NULL)
+	{
+		free(obj);
+		return NULL;
+	}
+
+	obj->super->type = GO_RECT;
+	obj->super->id = OBJECT_ID;
+	obj->super->x = x;
+	obj->super->y = y;
+	obj->super->color = color;
+
 	obj->w = w;
 	obj->h = h;
 	obj->depth = depth;
-	obj->color = color;
 	
 	OBJECT_ID++;
 
